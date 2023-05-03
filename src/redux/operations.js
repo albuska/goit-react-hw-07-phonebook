@@ -30,7 +30,6 @@ export const addContactItem = createAsyncThunk(
   }
 );
 
-
 export const deleteContactItem = createAsyncThunk(
   'contacts/deleteContact',
   async (contactId, { rejectedWithValue }) => {
