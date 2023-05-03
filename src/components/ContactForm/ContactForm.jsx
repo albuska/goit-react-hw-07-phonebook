@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { Form, Label, Input, Button } from './ContactForm.styled';
-import { addContact } from '../../redux/contactsSlice';
-import { useDispatch } from 'react-redux';
+import { addContactItem } from '../../redux/operations';
+import { useDispatch, useSelector } from 'react-redux';
+import { nanoid } from '@reduxjs/toolkit';
+import { selectItems } from 'redux/selectors';
 
 const ContactForm = () => {
   const dispatch = useDispatch(); 
+  const contacts = useSelector(selectItems); 
   
   const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+  const [phone, setPhone] = useState('');
 
   const handleInputChange = event => {
     switch (event.currentTarget.name) {
       case 'name':
         setName(event.currentTarget.value);
         break;
-      case 'number':
-        setNumber(event.currentTarget.value);
+      case 'phone':
+        setPhone(event.currentTarget.value);
         break;
       default:
         return;
@@ -25,9 +28,13 @@ const ContactForm = () => {
   const handleSubmit = event => {
     event.preventDefault();
     setName('');
-    setNumber('');
+    setPhone('');
 
-    dispatch(addContact({name, number}));
+const includeItem = contacts.find((item => {
+      return item.name.toLowerCase() === name.toLowerCase();
+}))
+    includeItem ? alert(`${name} is already in contacts`) : 
+    dispatch(addContactItem({name, phone, id: nanoid()}));
   };
 
   return (
@@ -47,17 +54,17 @@ const ContactForm = () => {
       <Label>
         Number
         <Input
-          type="tel"
-          name="number"
+          type="text"
+          name="phone"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
-          value={number}
+          value={phone}
           onChange={handleInputChange}
         />
       </Label>
 
-      <Button type="submit" onSubmit={handleSubmit} disabled={!name && number}>
+      <Button type="submit" onSubmit={handleSubmit} disabled={!name && phone}>
         Add contact
       </Button>
     </Form>
