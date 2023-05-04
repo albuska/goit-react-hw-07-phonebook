@@ -12,7 +12,7 @@ const handleRejected = (state, action) => {
 
 const extraActions = [fetchContacts, addContactItem, deleteContactItem];
 
-const getActions = type => extraActions.map(action => action[type]);
+const getActions = type => isAnyOf(...extraActions.map(action => action[type]));
 
 export const contactsSlice = createSlice({
   name: 'contacts',
@@ -31,9 +31,9 @@ export const contactsSlice = createSlice({
         );
         state.items.splice(index, 1);
       })
-      .addMatcher(isAnyOf(...getActions('pending')), handlePending)
-      .addMatcher(isAnyOf(...getActions('rejected')), handleRejected)
-      .addMatcher(isAnyOf(...getActions('fulfilled')), state => {
+      .addMatcher(getActions('pending'), handlePending)
+      .addMatcher(getActions('rejected'), handleRejected)
+      .addMatcher(getActions('fulfilled'), state => {
         state.isLoading = false;
         state.error = null;
       }),
