@@ -23,7 +23,7 @@ export const contactsSlice = createSlice({
         state.items = action.payload;
       })
       .addCase(addContactItem.fulfilled, (state, action) => {
-        state.items.unshift(action.payload);
+        state.items.push(action.payload);
       })
       .addCase(deleteContactItem.fulfilled, (state, action) => {
         const index = state.items.findIndex(
